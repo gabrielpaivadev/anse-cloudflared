@@ -2,15 +2,13 @@ import { defineConfig } from 'astro/config'
 import unocss from 'unocss/astro'
 import solidJs from '@astrojs/solid-js'
 import node from '@astrojs/node'
+import cloudflare from '@astrojs/cloudflare'
 import AstroPWA from '@vite-pwa/astro'
-import vercel from '@astrojs/vercel/edge'
-import netlify from '@astrojs/netlify/edge-functions'
 import disableBlocks from './plugins/disableBlocks'
 
 const envAdapter = () => {
   switch (process.env.OUTPUT) {
-    case 'vercel': return vercel({ analytics: false }) // Set `analytics` to `true` if you want to use Vercel Analytics
-    case 'netlify': return netlify()
+    case 'cloudflare': return cloudflare()
     default: return node({ mode: 'standalone' })
   }
 }
@@ -64,6 +62,7 @@ export default defineConfig({
   },
   vite: {
     plugins: [
+      process.env.OUTPUT === 'cloudflare' && disableBlocks(),
       process.env.OUTPUT === 'vercel' && disableBlocks(),
       process.env.OUTPUT === 'netlify' && disableBlocks(),
     ],
